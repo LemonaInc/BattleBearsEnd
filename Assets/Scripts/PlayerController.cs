@@ -48,6 +48,8 @@ public class PlayerController : Unit {
             return;
 
 
+		// Added a cursor lockstate so that the cursor is locked when the game is run and so you do not see a cursor on your screen as it is disabled.
+		Cursor.lockState = CursorLockMode.Locked;
 
 		// THIS IS WHERE WE FIX THE CAMERA ROTATION 
 

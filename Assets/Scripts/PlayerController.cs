@@ -13,16 +13,18 @@ public class PlayerController : Unit {
     private float raycastDistance = .1f;
     private int startHealth;
 
+	// Added a float for the coconut speed when throwing the coconuts 
+	public float coconutSpeed; 
+
 	public GameObject coconutPrefab;
-	public float shootForce;
 
 
 
 	// Verrtical rotation float 
 	float vertrotation = 0;
-	// Camera up and down range float and make this public so we can set or change this float the unity editor 
+	// Camera up and down range float and make this public so we can set or change this float the unity editor. 
 	public float CameraUpDownRange = 30f;
-   // Set the mouse sensitivity and make this public so we can set or change this float in the  unity editor 
+   // Set the mouse sensitivity and make this public so we can set or change this float in the  unity editor. 
 	public float mousesensitivity = 4f;
 
 
@@ -58,16 +60,14 @@ public class PlayerController : Unit {
 
 
 
-
-		if (Input.GetKeyDown(KeyCode.F))
+		// Added the ability to drop coconuts as a player 
+		if (Input.GetKeyDown(KeyCode.C))
 		{
+
+			// Instantiate the coconut, transform and set the coconut speed with the defined value of "coconutSpeed in the Unity editor".
 			GameObject bullet = Instantiate(coconutPrefab, transform.position, Quaternion.identity) as GameObject;
-			bullet.GetComponent<Rigidbody>().AddForce(transform.forward * 1000);
-
-	
-
+			bullet.GetComponent<Rigidbody>().AddForce(transform.forward * coconutSpeed);
 		
-
 
 
 		}
@@ -135,6 +135,7 @@ public class PlayerController : Unit {
     {
         base.Die();
         //Calling the Respawn method after 'respawnTime' seconds
+		anim.SetTrigger ("Jump");
         Invoke("Respawn", respawnTime);
     }
 
@@ -142,5 +143,6 @@ public class PlayerController : Unit {
     {
         health = startHealth;
         anim.SetBool("Death", false);
+
     }
 }

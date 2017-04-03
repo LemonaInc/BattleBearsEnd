@@ -8,12 +8,15 @@ public class AIController : Unit {
     public float shootInterval;
     public float range;
 
+	// Added a float for the coconut speed when throwing the coconuts.
+	public float coconutSpeed; 
+
 	public float coconut;
 
 	float runningRange = 50.0f;
 
 	public GameObject coconutPrefab;
-	public float shootForce;
+
 
 
     //A shootOffset variable so the AI doesn't shoot at the feet, but at the chest
@@ -50,6 +53,8 @@ public class AIController : Unit {
         SetState(State.Idle);
     }
 
+
+	// Create and set states
     private void SetState (State newState)
     {
         //This will stop all Coroutines on this MonoBehaviour (so only this object, not other ones)
@@ -80,24 +85,28 @@ public class AIController : Unit {
 
         }
     }
+		
 
-
-
-
-	// STATE ONE
+	// STATE ONE DEFAULT STATE
 
     IEnumerator OnIdle ()
     {
         //This is called once, when I enter the OnIdle Coroutine
 
         while (currentOutpost == null)
+
+				
+
         {
             LookForOutpost();
+
             //yield return null pauses the execution of this method for one frame
             yield return null;
 
             //This is called every frame, until StopAllCoroutines is called.
         }
+
+
 
         SetState(State.MovingToOutpost);
     }
@@ -130,14 +139,14 @@ public class AIController : Unit {
 
 
 
+
+	// Dancing State which is currently not being used but will be added in the future.
 	IEnumerator Dancing() {
 
-			anim.SetTrigger ("Jump");
-
-
-
+		// Add code here for dancing
 		yield return null;
 
+		// Switch the state to the Fleeing state
 		SetState(State.Fleeing);
 
 
@@ -147,13 +156,12 @@ public class AIController : Unit {
 
 	// STATE THREE
 
-	// Add the fleeing state 
+	// Add the fleeing state  where the bears will flee and leave the main area
 	IEnumerator OnFleeing()
 	{
 
 
-
-			
+		    // Play the jump annimation when the switch state occurs. This annimation plays once a bear kills another bear and it switches to the fleeing state. It works well as a small victory dance before the bear leaves the scene.
 			anim.SetTrigger ("Jump");
 
 
@@ -170,16 +178,13 @@ public class AIController : Unit {
 			// I tested this without destroying the AIController in this added state and without destroying the 
 			// AIController the game gets really slow after a minute as the bears that flee are still using game memory even after they left the main area aw the AIController was not destroyed.
 
-
 	
-
-	
-
-		    // Return state 
+		    // Return the state otherwise things will break.
 			yield return null;
 		//}
 
-		SetState(State.ChasingEnemy);
+		// This was set to chasing enemy before however since the bears have fled the main game there does not need to be a state set after the fleeing state unless the bears were to come back into the game area.
+		//SetState(State.ChasingEnemy);
 	
 	}
 
@@ -190,6 +195,7 @@ public class AIController : Unit {
     {
         float shootTimer = 0;
 
+		// While the currentEnemy health is less then one.  
         while (currentEnemy.health > 1)
         {
             shootTimer += Time.deltaTime;
@@ -205,16 +211,17 @@ public class AIController : Unit {
                 if (shootTimer >= shootInterval)
                 {
                     shootTimer = 0;
-                    //We shoot at the enemies position, with a bit of offset so it shoots at the chest, not feet
+                    //We shoot at the enemies position, with a bit of offset so it shoots at the chest, not feet.
                     ShootLasers(currentEnemy.transform.position + shootOffset, currentEnemy.transform);
                 }
             }
 
+			// Return the state. 
             yield return null;
         }
 
-		// When a bear captures the flag and kills another bear change the state to fleeing so that the bear will run away
-		SetState(State.Dancing);
+		// When a bear captures the flag and kills another bear change the state to fleeing so that the bear will run away.
+		SetState(State.Fleeing);
     }
 
 
